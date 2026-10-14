@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Games</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --header-bg: #111827;
+            --card-bg: #161f33;
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --border-color: #1f2937;
+            --text-main: #f8fafc;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Header Layout */
+        header {
+            background-color: var(--header-bg);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 100;
+        }
+
+        /* Stylized Gaming Logo */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .logo-container:hover .logo-icon {
+            transform: rotate(12deg) scale(1.05);
+        }
+        .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: color 0.3s ease;
+        }
+        .logo-text span {
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        /* Dropdown Theme Switcher */
+        .theme-dropdown {
+            position: relative;
+        }
+        .theme-toggle-btn {
+            background-color: var(--border-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--primary-color);
+        }
+        .theme-menu {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: var(--header-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 14px;
+            display: none;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 200;
+        }
+        .theme-menu.show {
+            display: flex;
+        }
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease;
+        }
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+        .color-dot.active-dot {
+            border-color: #ffffff;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            flex: 1;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            background-color: var(--header-bg);
+            padding: 20px 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 260px;
+            max-width: 400px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Filter Buttons (Default: Full Bar on Wide Screens) */
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .filter-btn {
+            padding: 9px 18px;
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-color: var(--primary-color);
+        }
+
+        /* Emoji Toggle Button (Hidden by default on wide screens) */
+        .filter-dropdown {
+            position: relative;
+            display: none;
+        }
+        .filter-toggle-btn {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 11px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+        .filter-toggle-btn:hover {
+            border-color: var(--primary-color);
+            background-color: var(--border-color);
+        }
+
+        /* Media Query: When screen shrinks below 950px, switch to Emoji Dropdown Menu */
+        @media (max-width: 950px) {
+            .filter-buttons {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                right: 0;
+                top: 50px;
+                background-color: var(--header-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+                z-index: 200;
+                min-width: 160px;
+                gap: 6px;
+            }
+            .filter-buttons.show {
+                display: flex;
+            }
+            .filter-btn {
+                text-align: left;
+                width: 100%;
+            }
+            .filter-dropdown {
+                display: block;
+            }
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        /* Game Card */
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        .game-img {
+            width: 100%;
+            height: 200px;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .game-info {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .game-title {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .game-tag {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        .game-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 22px;
+            line-height: 1.6;
+            flex: 1;
+        }
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        .download-btn.disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+            padding: 80px 0;
+            display: none;
+        }
+
+        footer {
+            background-color: var(--header-bg);
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">🎮</div>
+            <div class="logo-text">Pixel <span>Games</span></div>
+        </div>
+        
+        <div class="theme-dropdown">
+            <button class="theme-toggle-btn" onclick="toggleThemeMenu(event)">
+                <span>🎨 Theme</span>
+            </button>
+            <div class="theme-menu" id="themeMenu">
+                <div class="color-dot" style="background-color: #3b82f6;" onclick="setTheme('#3b82f6', '#2563eb', this)"></div>
+                <div class="color-dot active-dot" style="background-color: #10b981;" onclick="setTheme('#10b981', '#059669', this)"></div>
+                <div class="color-dot" style="background-color: #8b5cf6;" onclick="setTheme('#8b5cf6', '#7c3aed', this)"></div>
+                <div class="color-dot" style="background-color: #f59e0b;" onclick="setTheme('#f59e0b', '#d97706', this)"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Controls Bar -->
+        <div class="controls-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search game by name...">
+            </div>
+
+            <!-- Categories Filter (Horizontal on wide screens, Emoji Dropdown on narrow/shrunk screens) -->
+            <div class="filter-dropdown">
+                <button class="filter-toggle-btn" onclick="toggleFilterMenu(event)" title="Filter Categories">
+                    📋
+                </button>
+            </div>
+
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" onclick="filterCategory('all', this)">All</button>
+                <button class="filter-btn" onclick="filterCategory('strategy', this)">Strategy</button>
+                <button class="filter-btn" onclick="filterCategory('action', this)">Action</button>
+                <button class="filter-btn" onclick="filterCategory('adventure', this)">Adventure</button>
+                <button class="filter-btn" onclick="filterCategory('puzzle', this)">Puzzle</button>
+                <button class="filter-btn" onclick="filterCategory('horror', this)">Horror</button>
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <div class="games-grid" id="gamesGrid">
+            
+            <div class="game-card" data-category="strategy" data-title="Kingdom Wars">
+                <div class="game-img">Game Image 1</div>
+                <div class="game-info">
+                    <div class="game-header">
+                        <h3 class="game-title">Kingdom Wars</h3>
+                        <span class="game-tag">Strategy</span>
+                    </div>
+                    <p class="game-desc">Build armies and manage strategic resources in epic battles.</p>
+                    <a href="#" class="download-btn disabled">Coming Soon (In Development)</a>
+                </div>
+            </div>
+
+            <div class="game-card" data-category="adventure" data-title="Pixel Adventure">
+                <div class="game-img">Game Image 2</div>
+                <div class="game-info">
+                    <div class="game-header">
+                        <h3 class="game-title">Pixel Adventure</h3>
+                        <span class="game-tag">Adventure</span>
+                    </div>
+                    <p class="game-desc">An exciting platformer and adventure game with high-quality retro pixel art.</p>
+                    <a href="#" class="download-btn">Download Game (Setup.exe)</a>
+                </div>
+            </div>
+
+            <div class="game-card" data-category="puzzle" data-title="Code Challenge">
+                <div class="game-img">Game Image 3</div>
+                <div class="game-info">
+                    <div class="game-header">
+                        <h3 class="game-title">Code Challenge</h3>
+                        <span class="game-tag">Puzzle</span>
+                    </div>
+                    <p class="game-desc">Test your wits and quick thinking by solving complex puzzles and overcoming stages.</p>
+                    <a href="#" class="download-btn disabled">Coming Soon (In Development)</a>
+                </div>
+            </div>
+
+            <div class="game-card" data-category="action" data-title="Last Shadow">
+                <div class="game-img">Game Image 4</div>
+                <div class="game-info">
+                    <div class="game-header">
+                        <h3 class="game-title">Last Shadow</h3>
+                        <span class="game-tag">Action</span>
+                    </div>
+                    <p class="game-desc">Combat and fast-paced action game set in a dark futuristic world.</p>
+                    <a href="#" class="download-btn disabled">Coming Soon (In Development)</a>
+                </div>
+            </div>
+
+            <div class="no-results" id="noResults">No games found matching your search.</div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Pixel Games. All rights reserved by viw511.</p>
+    </footer>
+
+    <script>
+        function toggleThemeMenu(e) {
+            e.stopPropagation();
+            document.getElementById('themeMenu').classList.toggle('show');
+            document.getElementById('filterButtons').classList.remove('show');
+        }
+
+        function toggleFilterMenu(e) {
+            e.stopPropagation();
+            document.getElementById('filterButtons').classList.toggle('show');
+            document.getElementById('themeMenu').classList.remove('show');
+        }
+
+        function setTheme(primary, hover, dotElement) {
+            document.documentElement.style.setProperty('--primary-color', primary);
+            document.documentElement.style.setProperty('--primary-hover', hover);
+
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active-dot'));
+            dotElement.classList.add('active-dot');
+            document.getElementById('themeMenu').classList.remove('show');
+        }
+
+        let currentCategory = 'all';
+
+        document.getElementById('searchInput').addEventListener('input', filterGames);
+
+        function filterCategory(category, btn) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('filterButtons').classList.remove('show');
+            filterGames();
+        }
+
+        function filterGames() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.game-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const category = card.getAttribute('data-category');
+
+                const matchesSearch = title.includes(searchValue);
+                const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const noResultsMsg = document.getElementById('noResults');
+            noResultsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+        }
+
+        window.addEventListener('click', function() {
+            document.getElementById('themeMenu').classList.remove('show');
+            // إغلاق قائمة الفلتر المنسدلة فقط إذا كانت في وضع الهواتف (الشاشات المنكمشة)
+            if (window.innerWidth <= 950) {
+                document.getElementById('filterButtons').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

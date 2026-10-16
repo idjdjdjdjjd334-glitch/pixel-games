@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Games</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -527,7 +528,6 @@
 
         window.addEventListener('click', function() {
             document.getElementById('themeMenu').classList.remove('show');
-            // إغلاق قائمة الفلتر المنسدلة فقط إذا كانت في وضع الهواتف (الشاشات المنكمشة)
             if (window.innerWidth <= 950) {
                 document.getElementById('filterButtons').classList.remove('show');
             }
